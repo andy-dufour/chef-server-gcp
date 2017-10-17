@@ -1,0 +1,27 @@
+chef_id_rsa*
+.chef/knife.rb
+.chef/delivery.pem
+.vagrant
+Berksfile.lock
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+*.deb
+*.pem
+
+# Bundler
+Gemfile.lock
+bin/*
+.bundle/*
+
+.kitchen/
+.kitchen.local.yml
+
+*.log
+*.license
+*.tfstate
+*.tfstate.backup
+*.info
