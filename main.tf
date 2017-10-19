@@ -1,7 +1,28 @@
+terraform {
+  required_version = "= 0.9.11"
+}
+
 provider "google" {
   credentials = "${file("${var.gcp_credentials_file}")}"
   project     = "${var.gcp_project}"
   region      = "${var.gcp_region}"
+}
+
+resource "google_sql_database_instance" "master" {
+  name = "master-instancev3"
+  region = "${var.gcp_region}"
+  database_version = "POSTGRES_9_6"
+
+  settings {
+    tier = "db-custom-2-4096"
+    disk_size = "10"
+    disk_type = "PD_SSD"
+  }
+}
+
+resource "google_sql_database" "users" {
+  name      = "users-db"
+  instance  = "${google_sql_database_instance.master.name}"
 }
 
 resource "google_dns_record_set" "chef-server" {
