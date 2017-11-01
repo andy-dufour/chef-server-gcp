@@ -1,19 +1,23 @@
 variable "gcp_region" {
-  default = "us-west1"
+  default = "us-central1"
 }
 
 variable "gcp_credentials_file" {
-  default = "/Users/jmiller/.gcp/habitat-kubernetes-playland-0d9934e67750.json"
+  default = "/Users/andrewdufour/.gcp/AndrewDufour-0afa53a0e663.json"
 }
 
 variable "gcp_project" {
- default = "habitat-kubernetes-playland"
+ default = "andrewdufour-183117"
 }
 
 variable "gcp_image_user" {
- default = "jmiller"
+ default = "adufour"
 }
 
 variable "gcp_private_key" {
- default = "/Users/jmiller/.ssh/google_compute_engine"
+ default = "/Users/andrewdufour/.ssh/id_rsa"
+}
+
+variable "db_name" {
+  default = "chef-psql"
 }

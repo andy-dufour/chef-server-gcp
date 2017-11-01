@@ -2,6 +2,7 @@ chef_id_rsa*
 .chef/knife.rb
 .chef/delivery.pem
 .vagrant
+.terraform
 Berksfile.lock
 *~
 *#
@@ -25,3 +26,8 @@ bin/*
 *.tfstate
 *.tfstate.backup
 *.info
+
+vendor
+vendor/**
+
+*.tfstate*
