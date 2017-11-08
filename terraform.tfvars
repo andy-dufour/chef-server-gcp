@@ -1,0 +1,5 @@
+gcp_project = "andrewdufour-183117"
+gcp_credentials_file = "/Users/andrewdufour/.gcp/AndrewDufour-0afa53a0e663.json"
+gcp_region = "us-central1"
+db_name = "chef17"
+gcp_private_key = "/Users/andrewdufour/.ssh/id_rsa"

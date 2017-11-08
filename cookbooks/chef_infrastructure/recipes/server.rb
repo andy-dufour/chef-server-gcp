@@ -1,4 +1,14 @@
 
+automate_db = begin
+                data_bag(node['cluster_name'])
+              rescue Net::HTTPServerException, Chef::Exceptions::InvalidDataBagPath
+                nil # empty array for length comparison
+              end
+
+if automate_db
+  include_recipe 'chef_infrastructure::_more_frontends'
+end
+
 chef_server node['fqdn'] do
   version :latest
   config <<-EOS
@@ -57,67 +67,11 @@ directory "#{install_dir}/.chef" do
   action :create
 end
 
-chef_user 'delivery' do
-  first_name 'Delivery'
-  last_name 'User'
-  email 'delivery@services.com'
-  password 'delivery'
-  key_path "#{install_dir}/.chef/delivery.pem"
+chef_gem 'chef-vault' do
+  action :install
+  compile_time true
 end
 
-chef_org 'delivery' do
-  org_full_name 'Delivery Organization'
-  key_path "#{install_dir}/.chef/delivery-validator.pem"
-  admins %w( delivery )
-end
-
-file "#{install_dir}/.chef/knife.rb" do
-  content "
-current_dir = File.dirname(__FILE__)
-node_name                \"delivery\"
-client_key               \"\#\{current_dir\}/delivery.pem\"
-chef_server_url          \"https://#{node['fqdn']}/organizations/delivery\"
-cookbook_path            [\"#{install_dir}/cookbooks\"]
-ssl_verify_mode          :verify_none
-validation_key           \"/nonexist\"
-"
-end
-
-builder_key = OpenSSL::PKey::RSA.new(2048)
-
-directory "#{install_dir}/data_bags" do
-  owner 'root'
-  group 'root'
-  mode 0o0700
-  action :create
-end
-
-ruby_block 'write_automate_databag' do
-  block do
-
-    infra_secrets = Mash.new
-
-    infra_secrets['validator_pem'] = ::File.read("#{install_dir}/.chef/delivery-validator.pem")
-    infra_secrets['user_pem'] = ::File.read("#{install_dir}/.chef/delivery.pem")
-    infra_secrets['builder_pem'] = builder_key.to_pem
-    infra_secrets['builder_pub'] = "ssh-rsa #{[builder_key.to_blob].pack('m0')}"
-
-    ::File.write("#{install_dir}/data_bags/automate.json", infra_secrets.to_json)
-    ::File.chmod(600, "#{install_dir}/data_bags/automate.json")
-  end
-  not_if { ::File.exist?("#{install_dir}/data_bags/automate.json") }
-end
-
-execute 'create_automate_automate_vault_item' do
-  command "knife vault create automate automate -J \"#{install_dir}/data_bags/automate.json\" -A \"delivery\" -M client"
-  cwd install_dir
-  sensitive true
-  not_if 'knife vault isvault automate automate -M client'
-end
-
-execute 'create_automate_password_vault_item' do
-  command "knife vault create automate password '{\"password\"\:\"\"}' -A \"delivery\" -M client"
-  cwd install_dir
-  sensitive true
-  not_if 'knife vault isvault automate password -M client'
+unless automate_db
+  include_recipe 'chef_infrastructure::_first_frontend'
 end
