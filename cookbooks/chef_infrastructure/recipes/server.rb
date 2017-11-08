@@ -30,12 +30,15 @@ opscode_solr4['external'] = true
 opscode_solr4['external_url'] = 'http://#{node['chef_server']['elasticsearch']['vip']}:9200'
 opscode_erchef['search_provider'] = 'elasticsearch'
 opscode_erchef['search_queue_mode'] = 'batch'
+opscode_erchef['db_pool_size'] = 10
 
 # HA mode requires sql-backed storage for bookshelf.
 
 bookshelf['storage_type'] = :sql
-
+bookshelf['db_pool_size'] = 10
 # RabbitMQ settings
+
+oc_bifrost['db_pool_size'] = 10
 
 rabbitmq['enable'] = false
 rabbitmq['management_enabled'] = false

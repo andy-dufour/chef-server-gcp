@@ -38,3 +38,11 @@ file '/var/opt/opscode/upgrades/migration-level' do
   group 'root'
   mode 0600
 end
+
+
+file '/var/opt/opscode/bootstrapped' do
+  action :touch
+  owner 'root'
+  group 'root'
+  mode 0600
+end
